@@ -2,12 +2,13 @@
 
 
 import os
-from flask import Flask  # nuevo
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_debugtoolbar import DebugToolbarExtension  # nuevo
 
 # instanciado la db
 db = SQLAlchemy()
+toolbar = DebugToolbarExtension()  # nuevo
 
 
 # nuevo
@@ -21,6 +22,7 @@ def create_app(script_info=None):
 
     #  estableciendo extextensiones
     db.init_app(app)
+    toolbar.init_app(app)  # nuevo
 
     # registrando blueprints
     from project.api.users import users_blueprint
