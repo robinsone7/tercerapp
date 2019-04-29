@@ -40,7 +40,10 @@ class TestUserService(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
-            self.assertIn('abel.huanca@upeu.edu.pe ha sido agregado!', data['message'])
+            self.assertIn(
+                'abel.huanca@upeu.edu.pe ha sido agregado!',
+                data['message']
+            )
             self.assertIn('success', data['status'])
 
     def test_add_user_invalid_json(self):
@@ -58,7 +61,8 @@ class TestUserService(BaseTestCase):
 
     def test_add_user_invalid_json_keys(self):
         """
-        Asegurando se produce un error si el objeto JSON no tiene una key username
+        Asegurando se produce un error si el objeto JSON no tiene una key
+        username
         """
         with self.client:
             response = self.client.post(
@@ -155,19 +159,17 @@ class TestUserService(BaseTestCase):
                 'abelthf@gmail.com', data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
 
-
     def test_main_no_users(self):
-        """Asegurando que la ruta principal funcione correctamente cuando no hay usuarios
-        añadidos a la base de datos."""
+        """Asegurando que la ruta principal funcione correctamente cuando no
+        hay usuarios añadidos a la base de datos."""
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Todos los usuarios', response.data)
         self.assertIn(b'<p>No hay usuarios!</p>', response.data)
 
-
     def test_main_with_users(self):
-        """Asegurando que la runta principal funcione correctamente cuando un usuario es
-        correctamente agregado a la base de datos."""
+        """Asegurando que la runta principal funcione correctamente cuando un
+        usuario es correctamente agregado a la base de datos."""
         add_user('abel', 'abel.huanca@upeu.edu.pe')
         add_user('fredy', 'abelthf@gmail.com')
         with self.client:
@@ -180,7 +182,8 @@ class TestUserService(BaseTestCase):
 
     def test_main_add_user(self):
         """
-        Asegurando que un nuevo usuarios pueda ser agregado a la db mediante un POST request.
+        Asegurando que un nuevo usuarios pueda ser agregado a la db mediante
+        un POST request.
         """
         with self.client:
             response = self.client.post(
