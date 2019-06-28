@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request, render_template
 # from flask import Blueprint, jsonify, request
 from sqlalchemy import exc
 
-from project.api.models import Paciente
+from project.api.models import Paciente, Consulta, Doctor, Detconsulta
 from project import db
 
 

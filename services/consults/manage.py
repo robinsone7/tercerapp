@@ -6,7 +6,7 @@ import coverage
 from flask.cli import FlaskGroup
 
 from project import create_app, db  # nuevo
-from project.api.models import Paciente  # nuevo
+from project.api.models import Paciente, Consulta, Doctor, Detconsulta  # nuevo
 
 
 COV = coverage.coverage(
@@ -42,9 +42,32 @@ def test():
 @cli.command('seed_db')
 def seed_db():
     """Seeds the database."""
-    db.session.add(Paciente(username='fredy', email="abelthf@gmail.com"))
-    db.session.add(Pacient(eusername='abel', email="abel.huanca@upeu.edu.pe"))
+    """Seeds Paciente"""
+    db.session.add(Paciente(name='fredy', email="abelthf@gmail.com"))
+    db.session.add(Paciente(name='abel', email="abel.huanca@upeu.edu.pe"))
+    db.session.add(Paciente(name='robinson', email="robinson@gmail.com"))
+    db.session.add(Paciente(name='genaro', email="robinson.genaro@upeu.edu.pe"))
+    """Seeds Doctor"""
+    db.session.add(Doctor(name='noemi', email="nolemi@gmail.com", coddoctor="20102010"))
+    db.session.add(Doctor(name='leon', email="noemi.leon@upeu.edu.pe", coddoctor="20102011"))
+    db.session.add(Doctor(name='manzanares', email="manzana@gmail.com", coddoctor="20102012"))
+    db.session.add(Doctor(name='lucy', email="lucy.asenjo@upeu.edu.pe", coddoctor="20102030"))
     db.session.commit()
+
+@cli.command('seed_db2')
+def seed_db2():
+    """Seeds Consulta"""
+    db.session.add(Consulta(idpaciente='1', detalle='dolor de cabeza constante', verificacion="A", recompensa="10"))
+    db.session.add(Consulta(idpaciente='2', detalle='fiebre y dolor de diente', verificacion="B", recompensa="5"))
+    """Seeds Detalle de Consulta"""
+    db.session.add(Detconsulta(iddoctor='1', idconsulta="1", respuesta="dormir", estado="F"))
+    db.session.add(Detconsulta(iddoctor='4', idconsulta="1", respuesta="pastillas", estado="F"))
+    db.session.add(Detconsulta(iddoctor='1', idconsulta="2", respuesta="descansar", estado="F"))
+    db.session.add(Detconsulta(iddoctor='2', idconsulta="2", respuesta="manzanilla", estado="F"))
+
+    db.session.commit()
+
+
 
 @cli.command()
 def cov():
