@@ -100,10 +100,10 @@
         </form>
         <br>
         <hr>
-          {% if users %}
+          {% if doctors %}
             <ol>
-              {% for user in users %}
-                <li>{{user.username}}</li>
+              {% for doctor in doctors %}
+                <li>{{doctor.name}}</li>
               {% endfor %}
             </ol>
           {% else %}

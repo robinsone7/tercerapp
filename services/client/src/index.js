@@ -4,6 +4,8 @@ import axios from 'axios';
 
 import AddUser from './components/AddUser';
 import UsersList from './components/UsersList';
+import AddDoctor from './components/AddDoctor';
+import DoctorsList from './components/DoctorsList';
 
 
 class App extends Component {
@@ -12,12 +14,14 @@ class App extends Component {
     super();
     // nuevo
     this.state = {
-      users: []
+      users: [],
+      doctors: []
     };
   };
   // nuevo
   componentDidMount() {
     this.getUsers();
+    this.getDoctors();
   };
 
   getUsers() {
@@ -27,6 +31,16 @@ class App extends Component {
   };
 
   addUser(event) {
+    event.preventDefault();
+    console.log('sanity check!');
+  };
+  getDoctors() {
+    axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/doctors`)  // nuevo http://localhost:5001
+    .then((res) => { this.setState({ doctors: res.data.data.doctors }); })
+    .catch((err) => { console.log(err); });
+  };
+
+  addDoctor(event) {
     event.preventDefault();
     console.log('sanity check!');
   };
@@ -40,9 +54,9 @@ class App extends Component {
               <br/>
               <h1 className="title is-1">Todos los usuarios</h1>
               <hr/><br/>
-              <AddUser addUser={this.addUser}/>
+              <AddDoctor addDoctor={this.addDoctor}/>
               <br/><br/>
-              <UsersList users={this.state.users}/>
+              <DoctorsList doctors={this.state.doctors}/>
             </div>
           </div>
         </div>

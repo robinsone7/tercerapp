@@ -10,12 +10,10 @@ const DoctorsList = (props) => {
               key={doctor.id}
               className="box title is-4"
             >{ doctor.name }
+            { doctor.mail }
+
             </h4>
-             <h4
-             key={doctor.id}
-             className="box title is-4"
-           >{ doctor.email }
-           </h4>
+        
           )
         })
       }

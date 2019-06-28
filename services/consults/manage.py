@@ -54,11 +54,17 @@ def seed_db():
     db.session.add(Doctor(name='lucy', email="lucy.asenjo@upeu.edu.pe", coddoctor="20102030"))
     db.session.commit()
 
-@cli.command('seed_db2')
+@cli.command('seed_dbconsulta')
 def seed_db2():
     """Seeds Consulta"""
     db.session.add(Consulta(idpaciente='1', detalle='dolor de cabeza constante', verificacion="A", recompensa="10"))
     db.session.add(Consulta(idpaciente='2', detalle='fiebre y dolor de diente', verificacion="B", recompensa="5"))
+    
+    db.session.commit()
+
+@cli.command('seed_dbdet')
+def seed_db2():
+    
     """Seeds Detalle de Consulta"""
     db.session.add(Detconsulta(iddoctor='1', idconsulta="1", respuesta="dormir", estado="F"))
     db.session.add(Detconsulta(iddoctor='4', idconsulta="1", respuesta="pastillas", estado="F"))
@@ -66,8 +72,6 @@ def seed_db2():
     db.session.add(Detconsulta(iddoctor='2', idconsulta="2", respuesta="manzanilla", estado="F"))
 
     db.session.commit()
-
-
 
 @cli.command()
 def cov():

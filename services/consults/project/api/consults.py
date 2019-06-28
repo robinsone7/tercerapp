@@ -31,12 +31,12 @@ def ping_pong():
 @consults_blueprint.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        username = request.form['username']
+        name = request.form['name']
         email = request.form['email']
-        db.session.add(Paciente(username=username, email=email))
+        db.session.add(Doctor(name=name, email=email))
         db.session.commit()
-    users = Paciente.query.all()
-    return render_template('index.html', consults=consults)
+    doctors = Doctor.query.all()
+    return render_template('index.html', doctors=doctors)
 
 # @users_blueprint.route('/users', methods=['POST'])
 # def add_user():
@@ -51,8 +51,8 @@ def index():
 #     }
 #     return jsonify(response_object), 201
 #
-@consults_blueprint.route('/users', methods=['POST'])
-def add_user():
+@consults_blueprint.route('/doctors', methods=['POST'])
+def add_doctor():
     post_data = request.get_json()
     response_object = {
         'status': 'falló',
@@ -60,12 +60,12 @@ def add_user():
     }
     if not post_data:
         return jsonify(response_object), 400
-    username = post_data.get('username')
+    name = post_data.get('name')
     email = post_data.get('email')
     try:
-        user = User.query.filter_by(email=email).first()
+        doctor = Doctor.query.filter_by(email=email).first()
         if not user:
-            db.session.add(Paciente(username=username, email=email))
+            db.session.add(Doctor(name=name, email=email))
             db.session.commit()
             response_object['status'] = 'success'
             response_object['message'] = f'{email} ha sido agregado!'
@@ -117,13 +117,49 @@ def get_single_user(user_id):
         return jsonify(response_object), 404
 
 
-@consults_blueprint.route('/users', methods=['GET'])
-def get_all_users():
-    """Get all users"""
+@consults_blueprint.route('/doctors', methods=['GET'])
+def get_all_doctors():
+    """Get all doctores"""
     response_object = {
         'status': 'success',
         'data': {
-            'users': [user.to_json() for user in User.query.all()]
+            'doctors': [doctor.to_json() for doctor in Doctor.query.all()]
+        }
+    }
+
+    return jsonify(response_object), 200
+
+@consults_blueprint.route('/pacientes', methods=['GET'])
+def get_all_pacientes():
+    """Get all pacientes"""
+    response_object = {
+        'status': 'success',
+        'data': {
+            'pacientes': [paciente.to_json() for paciente in Paciente.query.all()]
+        }
+    }
+
+    return jsonify(response_object), 200
+
+@consults_blueprint.route('/consultas', methods=['GET'])
+def get_all_consultas():
+    """Get all pacientes"""
+    response_object = {
+        'status': 'success',
+        'data': {
+            'consultas': [consulta.to_json() for consulta in Consulta.query.all()]
+        }
+    }
+
+    return jsonify(response_object), 200
+
+@consults_blueprint.route('/detconsulta', methods=['GET'])
+def get_all_detconsultas():
+    """Get all detconsulta"""
+    response_object = {
+        'status': 'success',
+        'data': {
+            'detconsultas': [detconsulta.to_json() for detconsulta in Detconsulta.query.all()]
         }
     }
 

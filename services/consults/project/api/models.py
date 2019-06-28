@@ -66,9 +66,9 @@ class Consulta(db.Model):
 class Doctor(db.Model):
     __tablename__ = 'doctors'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
+    name = db.Column(db.String(64), nullable=True)
     email = db.Column(db.String(128), nullable=False)
-    coddoctor = db.Column(db.String(128), nullable=False)
+    coddoctor = db.Column(db.String(128), index=True)
 
     def to_json(self):
         return {
