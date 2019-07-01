@@ -6,7 +6,7 @@ import unittest
 
 from project.tests.base import BaseTestCase
 from project import db
-from project.api.models import User
+from project.api.models import User, Paciente, Doctor, Consulta, Detconsulta
 
 
 def add_user(username, email):
@@ -15,19 +15,34 @@ def add_user(username, email):
     db.session.commit()
     return user
 
+def add_paciente(name, email):
+    paciente = Paciente(name=name, email=email)
+    db.session.add(paciente)
+    db.session.commit()
+    return paciente
+
 
 class TestUserService(BaseTestCase):
     """Test para el servicio Users."""
 
-    def test_users(self):
+    def test_main_no_users(self):
+        """Asegurando que la ruta principal funcione correctamente cuando no
+        hay usuarios añadidos a la base de datos."""
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Todos los usuarios', response.data)
+        self.assertIn(b'<p>No hay usuarios!</p>', response.data)
+    
+
+    def test_consults(self):
         """Asegurando que la runta /ping funcione correctamente."""
-        response = self.client.get('/users/ping')
+        response = self.client.get('/consults/ping')
         data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
         self.assertIn('pong!', data['message'])
         self.assertIn('success', data['status'])
 
-    def test_add_user(self):
+    def test_add_doctors(self):
         """Asegurando que un usuario puede ser agregado a la base de datos."""
         with self.client:
             response = self.client.post(
@@ -159,13 +174,30 @@ class TestUserService(BaseTestCase):
                 'abelthf@gmail.com', data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
 
-    def test_main_no_users(self):
-        """Asegurando que la ruta principal funcione correctamente cuando no
-        hay usuarios añadidos a la base de datos."""
-        response = self.client.get('/')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Todos los usuarios', response.data)
-        self.assertIn(b'<p>No hay usuarios!</p>', response.data)
+    def test_all_pacientes(self):
+        """Asegurando PACIENTES correctamente."""
+        add_paciente('abel', 'abel.huanca@upeu.edu.pe')
+        add_paciente('fredy', 'abelthf@gmail.com')
+        add_paciente('robinson', 'robinson@gmail.com')
+        add_paciente('genaro', 'robinson.genaro@upeu.edu.pe')
+
+        with self.client:
+            response = self.client.get('/pacientes')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['pacientes']), 4)
+            self.assertIn('abel', data['data']['pacientes'][0]['name'])
+            self.assertIn('abel.huanca@upeu.edu.pe', data['data']['pacientes'][0]['email'])
+            self.assertIn('fredy', data['data']['pacientes'][1]['name'])
+            self.assertIn('abelthf@gmail.com', data['data']['pacientes'][1]['email'])
+            self.assertIn('robinson', data['data']['pacientes'][2]['name'])
+            self.assertIn('robinson@gmail.com', data['data']['pacientes'][2]['email'])
+            self.assertIn('genaro', data['data']['pacientes'][3]['name'])
+            self.assertIn('robinson.genaro@upeu.edu.pe', data['data']['pacientes'][3]['email'])
+            
+            self.assertIn('success', data['status'])
+
+
 
     def test_main_with_users(self):
         """Asegurando que la runta principal funcione correctamente cuando un

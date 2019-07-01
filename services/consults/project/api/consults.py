@@ -1,6 +1,6 @@
 # services/users/project/api/users.py
 
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, redirect
 # from flask import Blueprint, jsonify, request
 from sqlalchemy import exc
 
@@ -19,6 +19,8 @@ def ping_pong():
         'message': 'pong!'
     })
 
+
+
 # @users_blueprint.route('/', methods=['GET'])
 # def index():
 #     return render_template('index.html')
@@ -33,10 +35,14 @@ def index():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
-        db.session.add(Doctor(name=name, email=email))
+        coddoctor = request.form['coddoctor']
+        db.session.add(Doctor(name=name, email=email, coddoctor=coddoctor))
         db.session.commit()
     doctors = Doctor.query.all()
-    return render_template('index.html', doctors=doctors)
+    return render_template('doctors.html', doctors=doctors)
+    #return render_template('AddEditForm.js', doctors=doctor
+
+
 
 # @users_blueprint.route('/users', methods=['POST'])
 # def add_user():
@@ -51,6 +57,74 @@ def index():
 #     }
 #     return jsonify(response_object), 201
 #
+
+
+@consults_blueprint.route('/update_pac/<paciente_id>', methods=['GET', 'POST'])
+def update_paciente(paciente_id):
+    paciente = Paciente.query.filter_by(id=int(paciente_id)).first()
+    name = request.form['name']
+    email = request.form['email']
+    paciente.name = name
+    paciente.email = email
+    db.session.commit()
+    return redirect ("/")
+
+@consults_blueprint.route('/eliminar_pac/<paciente_id>', methods=['GET', 'POST'])
+def delete_paciente(paciente_id):
+    paciente = Paciente.query.filter_by(id=int(paciente_id)).first()
+    db.session.delete(paciente)
+    db.session.commit()
+    return redirect ("/")
+
+@consults_blueprint.route('/eliminar_doc/<doctor_id>', methods=['GET', 'POST'])
+def delete_doctor(doctor_id):
+    doctor = Doctor.query.filter_by(id=int(doctor_id)).first()
+    db.session.delete(doctor)
+    db.session.commit()
+    return redirect ("/") 
+
+@consults_blueprint.route('/eliminar_cons/<consulta_id>', methods=['GET', 'POST'])
+def delete_consulta(consulta_id):
+    consulta = Consulta.query.filter_by(id=int(consulta_id)).first()
+    db.session.delete(consulta)
+    db.session.commit()
+    return redirect ("/") 
+
+@consults_blueprint.route('/show/<doctor_id>', methods=['GET'])
+def show_doctor(doctor_id):
+    doctor = Doctor.query.filter_by(id=int(doctor_id)).first()
+    return render_template("form.html", doctor=doctor)
+
+@consults_blueprint.route('/update_doc/<doctor_id>', methods=['GET', 'POST'])
+def update_doctor(doctor_id):
+    doctor = Doctor.query.filter_by(id=int(doctor_id)).first()
+
+    name = request.form['name']
+    email = request.form['email']
+    coddoctor = request.form['coddoctor']
+    
+    doctor.name = name
+    doctor.email = email
+    doctor.coddoctor = coddoctor
+    
+    db.session.commit()
+    
+    return redirect ("/")
+
+@consults_blueprint.route('/update_cons/<consulta_id>', methods=['GET', 'POST'])
+def update_consulta(consulta_id):
+    consulta = Consulta.query.filter_by(id=int(consulta_id)).first
+    idpaciente = request.form['idpaciente']
+    detalle = request.form['detalle']
+    configuracion = post_data.get['configuracion']
+    recompensa = request.form['recompensa']
+    consulta.detalle = detalle
+    consulta.configuracion = configuracion
+    consulta.recompensa = recompensa
+    consulta.idpaciente = idpaciente
+    db.session.commit()
+    return redirect ("/")
+
 @consults_blueprint.route('/doctors', methods=['POST'])
 def add_doctor():
     post_data = request.get_json()
@@ -66,6 +140,32 @@ def add_doctor():
         doctor = Doctor.query.filter_by(email=email).first()
         if not user:
             db.session.add(Doctor(name=name, email=email))
+            db.session.commit()
+            response_object['status'] = 'success'
+            response_object['message'] = f'{email} ha sido agregado!'
+            return jsonify(response_object), 201
+        else:
+            response_object['message'] = 'Disculpa. El email ya existe.'
+            return jsonify(response_object), 400
+    except exc.IntegrityError:
+        db.session.rollback()
+        return jsonify(response_object), 400
+
+@consults_blueprint.route('/pacientes', methods=['POST'])
+def add_paciente():
+    post_data = request.get_json()
+    response_object = {
+        'status': 'falló',
+        'message': 'Carga inválida.'
+    }
+    if not post_data:
+        return jsonify(response_object), 400
+    name = post_data.get('name')
+    email = post_data.get('email')
+    try:
+        paciente = Paciente.query.filter_by(email=email).first()
+        if not paciente:
+            db.session.add(Paciente(name=name, email=email))
             db.session.commit()
             response_object['status'] = 'success'
             response_object['message'] = f'{email} ha sido agregado!'
@@ -164,3 +264,6 @@ def get_all_detconsultas():
     }
 
     return jsonify(response_object), 200
+
+
+

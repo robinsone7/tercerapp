@@ -81,12 +81,12 @@
     <div class="container">
       <div class="column is-one-third">
         <br>
-        <h1 class="title">Todos los usuarios</h1>
+        <h1 class="title">Todos los Doctores</h1>
         <hr><br>
         <form action="/" method="POST">
           <div class="field">
             <input
-              name="username" class="input"
+              name="name" class="input"
               type="text" placeholder="Ingrese un nombre de usuario" required>
           </div>
           <div class="field">
@@ -94,21 +94,57 @@
               name="email" class="input"
               type="email" placeholder="Ingrese una dirección email" required>
           </div>
+          <div class="field">
+            <input
+              name="coddoctor" class="input"
+              type="number" placeholder="Ingrese su codigo de doctor" required>
+          </div>
           <input
             type="submit" class="button is-link is-fullwidth"
             value="Submit">
         </form>
+
         <br>
-        <hr>
-          {% if doctors %}
-            <ol>
-              {% for doctor in doctors %}
-                <li>{{doctor.name}}</li>
-              {% endfor %}
-            </ol>
-          {% else %}
-            <p>No hay usuarios!</p>
-          {% endif %}
+        
+        <br>
+        <br>
+        <br>     
+         
+  <table id="productTable" class="table table-bordered table-condensed table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Cod Doctor</th>
+        <th>Editar</th>
+        <th>ELiminar</th>
+      </tr>
+    </thead>
+    <thead>
+      {% if doctors %}
+     
+      {% for doctor in doctors %}
+      
+      <tr> 
+          <th> {{doctor.name}}</th>
+          
+          <th> {{doctor.email}}</th>
+          
+          <th> {{doctor.coddoctor}}</th> 
+
+          <th> <a type="button" class="btn btn-warning" href="/show/{{doctor.id}}"  >Editar</button></th>
+
+          <th> <a type="button" class="btn btn-info" >Eliminar</button></th> 
+           
+      </tr>
+      {%  endfor %}
+      </ol>
+    {% else %}
+      <p>No hay usuarios!</p>
+    {% endif %}
+    </thead>
+  </table>
+        
         </div>
       </div>
     </div>
