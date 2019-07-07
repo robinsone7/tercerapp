@@ -5,13 +5,15 @@ services:
   users:
     build:
       context: ./services/users
-      dockerfile: Dockerfile-prod
+      dockerfile: Dockerfile-dev
+    volumes:
+      - './services/users:/usr/src/app'
     ports:
-      - 5000
+      - 5001:5000
     environment:
-      #- FLASK_ENV=production
-      - APP_SETTINGS=project.config.ProductionConfig
-      - DATABASE_URL=postgres://postgres:postgres@users-db:5432/users_prod
+      - FLASK_ENV=development
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DATABASE_URL=postgres://postgres:postgres@users-db:5432/users_dev
       - DATABASE_TEST_URL=postgres://postgres:postgres@users-db:5432/users_test
     depends_on:  # nuevo
       - users-db
@@ -21,17 +23,31 @@ services:
       context: ./services/users/project/db
       dockerfile: Dockerfile
     ports:
-      - 5432
+      - 5435:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-
-  nginx:
+  
+  consults:
     build:
-      context: ./services/nginx
-      dockerfile: Dockerfile-prod
-    restart: always
+      context: ./services/consults
+      dockerfile: Dockerfile-dev
     ports:
-      - 80:80
-    depends_on:
-      - users
+      - 6001:5000
+    environment:
+      - FLASK_ENV=production
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DATABASE_URL=postgres://postgres:postgres@consults-db:5432/consults_dev
+      - DATABASE_TEST_URL=postgres://postgres:postgres@consults-db:5432/consults_test
+    depends_on:  # nuevo
+      - consults-db
+
+  consults-db:  # nuevo
+    build:
+      context: ./services/consults/project/db
+      dockerfile: Dockerfile
+    ports:
+      - 5436:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
